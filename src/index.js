@@ -1,11 +1,37 @@
-const express = require("express");
+const express = require('express');
+const path = require('path');
+const hsb = require('express-handlebars');
+const morgan = require('morgan');
 const app = express();
-const morgan = require("morgan");
+const db = require('./config/db');
 
-app.use(morgan("combined"));
+db.connect();
 
-app.get("/", function (req, res) {
-    res.send("Hello World");
-});
+const route = require('./routes');
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(
+    express.urlencoded({
+        extended: true,
+    }),
+);
+
+app.use(express(express.json()));
+
+// HTTP logger
+// app.use(morgan("combined"));
+
+// Template engine
+app.engine(
+    'hbs',
+    hsb.engine({
+        extname: '.hbs',
+    }),
+);
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'resourse', 'views'));
+
+route(app);
 
 app.listen(3000);
