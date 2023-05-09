@@ -1,0 +1,95 @@
+<div class='mt-4'>
+    <h3>Danh sách khoá học của tôi</h3>
+    <table class='table mt-4'>
+        <thead>
+            <tr>
+                <th scope='col'>#</th>
+                <th scope='col'>Tên khoá học</th>
+                <th scope='col'>Video ID</th>
+                <th scope='col'>Thời gian tạo</th>
+                <th scope='col'></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+                <tr>
+                    <th scope='row'>{{sum @index 1}}</th>
+                    <td>{{this.name}}</td>
+                    <td>{{this.videoId}}</td>
+                    <td>{{this.createdAt}}</td>
+                    <td>
+                        <a
+                            href='/courses/{{this._id}}/edit'
+                            type='button'
+                            class='btn btn-link'
+                        >Sửa</a>
+                        <a
+                            type='button'
+                            class='btn btn-link'
+                            data-bs-toggle='modal'
+                            data-bs-target='#delete-course-modal'
+                            data-id='{{this._id}}'
+                        >Xoá</a>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<div
+    class='modal fade'
+    id='delete-course-modal'
+    tabindex='-1'
+    aria-labelledby='exampleModalLabel'
+    aria-hidden='true'
+>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h1 class='modal-title fs-5' id='exampleModalLabel'>Xoá khoá
+                    học?</h1>
+                <button
+                    type='button'
+                    class='btn-close'
+                    data-bs-dismiss='modal'
+                    aria-label='Close'
+                ></button>
+            </div>
+            <div class='modal-body'>
+                Bạn chắc chắn muốn xoá khoá học này?
+            </div>
+            <div class='modal-footer'>
+                <button
+                    id='btn-delete-course'
+                    type='button'
+                    class='btn btn-danger'
+                >Xoá</button>
+                <button
+                    type='button'
+                    class='btn btn-secondary'
+                    data-bs-dismiss='modal'
+                >Huỷ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method='post' name='delete-course-form'></form>
+
+<script>
+    const deleteModal = document.getElementById('delete-course-modal');
+    const deleteBtnCourse = document.getElementById('btn-delete-course'); 
+    var courseId;
+    var deleteForm = document.forms['delete-course-form']; 
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', (event) => { 
+            const button = event.relatedTarget; 
+            courseId = button.getAttribute('data-id');
+        }) 
+    };
+    deleteBtnCourse.onclick = () => { 
+        deleteForm.action = '/courses/' + courseId + '?_method=delete'; 
+        deleteForm.submit(); 
+    }
+</script>
